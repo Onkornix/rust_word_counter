@@ -44,7 +44,7 @@ impl Words {
             
         }
     }
-    fn update_ordered_map(&mut self) {
+    fn create_ordered(&mut self) {
         let value_that_exist: Vec<u32> = {
             let mut values_that_exist: Vec<u32> = Vec::new();
             for value in self.unordered_map.values() {
@@ -75,17 +75,25 @@ impl Words {
                     index_list.push(word.to_string());
                 }
 
-                if !index_list.is_empty() {
-                    if self.ordered_map.contains_key(&current_occurrence_value) {
-                        let mut old_value = self.ordered_map.get(&current_occurrence_value).unwrap().clone();
-
-                        old_value.append(&mut index_list);
-
-                        self.ordered_map.insert(current_occurrence_value, old_value);
-                    }
-                    
-                }
+                
             } 
+            if !index_list.is_empty() {
+                if self.ordered_map.contains_key(&current_occurrence_value) {
+
+                    for word in self.ordered_map.get(&current_occurrence_value).unwrap() {
+                        if index_list.contains(&word) {
+                            continue
+                        } else {
+                            index_list.push(word.to_string())
+                        }
+                    }
+                } else {
+                    self.ordered_map.insert(current_occurrence_value, index_list);
+                }
+                
+            }
+
+            
             if index == 0 {
                 break
             }
@@ -96,7 +104,10 @@ impl Words {
         }
 
     
-        //self.unordered_map.clear()
+        self.unordered_map.clear()
+    }
+    fn write_to_file(&mut self) {
+
     }
 }
 
@@ -108,12 +119,15 @@ fn main() {
         ordered_map: HashMap::new()
     };
 
-    if let Ok(lines) = read_line("/home/dylan/Documents/text.txt") {
+    if let Ok(lines) = read_line("/home/dylan/Documents/paradise.txt") {
         for line in lines.flatten() {
             new_map.update_unordered_map(line);
-            new_map.update_ordered_map();
+            
         }
-    }
+    } 
+    new_map.create_ordered();
+    new_map.write_to_file();
+    print!("{:?}", new_map.ordered_map);
     // for (word, occurrence) in new_map.unordered_map.iter() {
     //     println!("{}: {}", word, occurrence)
     // }
