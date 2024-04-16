@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 //use clap::Parser;
 use std::fs::File;
-use std::io::{self, BufWriter, Write};
+use std::io::{BufWriter, Write};
 
 pub struct Words {
     pub ungrouped_map: HashMap<String, u32>,
@@ -19,6 +19,7 @@ impl Words {
                 Some(s) => s.to_string(), 
                 None => break 
             };
+            
             
 
             if self.ungrouped_map.contains_key(&next) {
@@ -89,14 +90,12 @@ impl Words {
 
             index -= 1;
             current_occurrence_value = *self.values_that_exist.get(index).unwrap();
-             //println!("{:?}", self.grouped_map);
         }
 
     
         self.ungrouped_map.clear()
     }
     pub fn write_to_file(&mut self, output: &String) {
-        //println!("{:?}", self.grouped_map);
         
         let mut writer = BufWriter::new(File::create(output).expect("epic fail lol"));
 
@@ -106,16 +105,14 @@ impl Words {
         all_vals_sorted.reverse();
         let mut all_vals_sorted = all_vals_sorted.iter();
         let mut current_value = all_vals_sorted.next().expect("msg");
-        let max_value = all_vals_sorted.clone().last().unwrap();
 
-        println!("{current_value}, {max_value} {:?}", all_vals_sorted);
+        //println!("{current_value}, {max_value} {:?}", all_vals_sorted);
         loop {
             for occ_value in self.grouped_map.keys() {
                 if occ_value == current_value {
                     let data = format!("{}:\n{}", occ_value, self.grouped_map.get(occ_value).expect("fail").join("\n"));
-                    //println!("{}", data);
                     writer.write(data.as_bytes()).expect("failed to write");
-                    writer.write("\n \n".as_bytes()).expect("failed to write");
+                    writer.write("\n\n".as_bytes()).expect("failed to write");
                     break
                 }
                 
@@ -125,7 +122,6 @@ impl Words {
                 Some(v) => v,
                 None => break
             };
-            //println!("{}", current_value);
         }
         
     }

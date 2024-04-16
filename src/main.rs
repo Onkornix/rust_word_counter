@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-//use clap::Parser;
+use clap::Parser;
 use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
@@ -7,16 +7,16 @@ pub mod words;
 
 
 
-// #[derive(Parser)]
-// struct Args {
-//     /// The pattern to look for
-//     input: std::path::PathBuf,
-//     /// The path to the file to read
-//     output: std::path::PathBuf,
-// }
+#[derive(Parser)]
+struct Args {
+    /// The pattern to look for
+    input: std::path::PathBuf,
+    /// The path to the file to read
+    output: String
+}
 
 fn main() {
-    //let _args = Args::parse();
+    let args = Args::parse();
 
     let mut new_map = words::Words {
         ungrouped_map: HashMap::new(),
@@ -24,18 +24,14 @@ fn main() {
         values_that_exist: Vec::new(),
     };
 
-    if let Ok(lines) = read_line("/home/dylan/Documents/paradise.txt") {
+    if let Ok(lines) = read_line(args.input) {
         for line in lines.flatten() {
             new_map.update_ungrouped_map(line);
             
         }
     } 
     new_map.create_grouped_map();
-    new_map.write_to_file(&String::from("/home/dylan/code/rust/worderer/output.txt"));
-    //print!("{:?}", new_map.grouped_map);
-    // for (word, occurrence) in new_map.unordered_map.iter() {
-    //     println!("{}: {}", word, occurrence)
-    // }
+    new_map.write_to_file(&args.output);
     
 }
 
